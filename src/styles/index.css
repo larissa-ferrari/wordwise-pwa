@@ -1,0 +1,49 @@
+/* 1. Google Fonts */
+@import './fonts.css';
+
+/* 2. Tailwind utilities */
+@import './tailwind.css';
+
+/* 3. shadcn/ui + WordWise design tokens */
+@import './theme.css';
+
+/* 4. Global resets & base styles */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--ww-ink-black, #0a0807);
+  color: var(--ww-parchment, #e8d4a8);
+  font-family: var(--ww-font-body, 'DM Sans', system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+/* Safe area padding for mobile */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Scrollbar styling — dark theme */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a2f20;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c8a96e44;
+}

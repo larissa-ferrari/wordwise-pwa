@@ -1,0 +1,16 @@
+{
+  "name": "WordWise",
+  "short_name": "WordWise",
+  "description": "Seus livros, sua história — O app social para leitores apaixonados",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0807",
+  "theme_color": "#0a0807",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}

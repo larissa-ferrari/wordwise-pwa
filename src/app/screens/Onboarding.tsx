@@ -1,77 +1,86 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Heart, Smile, Zap, BookOpen, Sparkles } from 'lucide-react';
-import { useOnboarding } from '../context/OnboardingContext';
-import { ROUTES } from '../constants';
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ChevronRight, Heart, Smile, Zap, BookOpen, Sparkles } from 'lucide-react'
+import { useOnboarding } from '../context/OnboardingContext'
+import { ROUTES } from '../constants'
+import { GenreIcon } from '../components/icons'
+import type { GenreId } from '../components/icons'
+
+const aesthetics = [
+  { id: 'dark-academia', name: 'Dark Academia',        colors: ['#1a1210', '#c8a96e', '#8a7e6e'] },
+  { id: 'cottagecore',   name: 'Cottagecore Literário', colors: ['#f5f0e8', '#7c9e7a', '#e8d4a8'] },
+  { id: 'minimalist',    name: 'Minimalista Urbano',    colors: ['#0a0807', '#6a9fcf', '#f5f0e8'] },
+  { id: 'vibrant',       name: 'Fantasia Vibrante',     colors: ['#b87cde', '#e8635a', '#c8a96e'] },
+]
+
+const genres: { id: GenreId; name: string }[] = [
+  { id: 'fantasy',    name: 'Fantasy'     },
+  { id: 'romance',    name: 'Romance'     },
+  { id: 'thriller',   name: 'Thriller'    },
+  { id: 'literary',   name: 'Literário'   },
+  { id: 'scifi',      name: 'Sci-Fi'      },
+  { id: 'horror',     name: 'Terror'      },
+  { id: 'nonfiction', name: 'Não-ficção'  },
+  { id: 'manga',      name: 'Mangá'       },
+]
+
+const moods = [
+  { id: 'escape',    label: 'Quero escapar',       Icon: Sparkles, color: '#b87cde' },
+  { id: 'learn',     label: 'Quero aprender',      Icon: BookOpen, color: '#6a9fcf' },
+  { id: 'cry',       label: 'Quero chorar',        Icon: Heart,    color: '#e8635a' },
+  { id: 'laugh',     label: 'Quero rir',           Icon: Smile,    color: '#c8a96e' },
+  { id: 'challenge', label: 'Quero ser desafiado', Icon: Zap,      color: '#7c9e7a' },
+]
 
 export function Onboarding() {
-  const navigate = useNavigate();
-  const { complete } = useOnboarding();
-  const [step, setStep] = useState(1);
-  const [selectedAesthetic, setSelectedAesthetic] = useState<string>('');
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
-  const [selectedMood, setSelectedMood] = useState<string>('');
+  const navigate = useNavigate()
+  const { complete } = useOnboarding()
+  const [step, setStep] = useState(1)
+  const [selectedAesthetic, setSelectedAesthetic] = useState<string>('')
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedBooks, setSelectedBooks] = useState<string[]>([])
+  const [selectedMood, setSelectedMood] = useState<string>('')
 
-  const aesthetics = [
-    { id: 'dark-academia', name: 'Dark Academia', colors: ['#1a1210', '#c8a96e', '#8a7e6e'] },
-    { id: 'cottagecore', name: 'Cottagecore Literário', colors: ['#f5f0e8', '#7c9e7a', '#e8d4a8'] },
-    { id: 'minimalist', name: 'Minimalista Urbano', colors: ['#0a0807', '#6a9fcf', '#f5f0e8'] },
-    { id: 'vibrant', name: 'Fantasia Vibrante', colors: ['#b87cde', '#e8635a', '#c8a96e'] },
-  ];
-
-  const genres = [
-    { id: 'fantasy', name: 'Fantasy', emoji: '🐉' },
-    { id: 'romance', name: 'Romance', emoji: '💕' },
-    { id: 'thriller', name: 'Thriller', emoji: '🔪' },
-    { id: 'literary', name: 'Literário', emoji: '📚' },
-    { id: 'scifi', name: 'Sci-Fi', emoji: '🚀' },
-    { id: 'horror', name: 'Terror', emoji: '👻' },
-    { id: 'nonfiction', name: 'Não-ficção', emoji: '🧠' },
-    { id: 'manga', name: 'Mangá', emoji: '🎌' },
-  ];
-
-  const moods = [
-    { id: 'escape', label: 'Quero escapar', icon: Sparkles, color: '#b87cde' },
-    { id: 'learn', label: 'Quero aprender', icon: BookOpen, color: '#6a9fcf' },
-    { id: 'cry', label: 'Quero chorar', icon: Heart, color: '#e8635a' },
-    { id: 'laugh', label: 'Quero rir', icon: Smile, color: '#c8a96e' },
-    { id: 'challenge', label: 'Quero ser desafiado', icon: Zap, color: '#7c9e7a' },
-  ];
-
-  const handleNext = () => {
+  function handleNext() {
     if (step < 5) {
-      setStep(step + 1);
+      setStep(step + 1)
     } else {
-      complete();
-      navigate(ROUTES.feed);
+      complete()
+      navigate(ROUTES.feed)
     }
-  };
+  }
 
-  const canProceed = () => {
+  function canProceed() {
     switch (step) {
-      case 2: return selectedAesthetic !== '';
-      case 3: return selectedGenres.length >= 3;
-      case 4: return selectedBooks.length >= 1;
-      case 5: return selectedMood !== '';
-      default: return true;
+      case 2: return selectedAesthetic !== ''
+      case 3: return selectedGenres.length >= 3
+      case 4: return selectedBooks.length >= 1
+      case 5: return selectedMood !== ''
+      default: return true
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0807] text-white flex flex-col">
       {/* Step 1: Splash */}
       {step === 1 && (
         <div className="flex-1 flex flex-col items-center justify-center px-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#c8a96e]/10 to-transparent rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-[#e8635a]/10 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#c8a96e]/10 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-[#e8635a]/10 to-transparent rounded-full blur-3xl" />
 
           <div className="relative z-10 text-center">
             <div className="w-32 h-32 mx-auto mb-8">
               <svg viewBox="0 0 100 100" className="w-full h-full">
                 <path d="M30 20 L30 80 L50 75 L50 15 Z" fill="#c8a96e" opacity="0.9" />
                 <path d="M50 15 L50 75 L70 80 L70 20 Z" fill="#e8d4a8" opacity="0.8" />
-                <path d="M35 35 L40 55 L45 40 L50 55 L55 35" stroke="#1a1210" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M35 35 L40 55 L45 40 L50 55 L55 35"
+                  stroke="#1a1210"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
                 <line x1="30" y1="50" x2="70" y2="50" stroke="#e8635a" strokeWidth="1" opacity="0.6" />
               </svg>
             </div>
@@ -81,7 +90,10 @@ export function Onboarding() {
               <span className="text-[#e8d4a8]">Wise</span>
             </h1>
 
-            <p className="text-lg text-[#c8a96e]/80 mb-12 italic" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <p
+              className="text-lg text-[#c8a96e]/80 mb-12 italic"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               "Seus livros, sua história."
             </p>
 
@@ -105,7 +117,9 @@ export function Onboarding() {
         <div className="flex-1 flex flex-col px-6 py-8 pb-32">
           <div className="mb-8">
             <p className="text-xs text-[#8a7e6e] uppercase tracking-wider mb-2">Passo 2 de 5</p>
-            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>Como é o seu universo literário?</h2>
+            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+              Como é o seu universo literário?
+            </h2>
             <p className="text-sm text-[#8a7e6e]">Escolha a estética que define você</p>
           </div>
 
@@ -143,33 +157,37 @@ export function Onboarding() {
         <div className="flex-1 flex flex-col px-6 py-8 pb-32">
           <div className="mb-8">
             <p className="text-xs text-[#8a7e6e] uppercase tracking-wider mb-2">Passo 3 de 5</p>
-            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>O que faz seu coração acelerar?</h2>
+            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+              O que faz seu coração acelerar?
+            </h2>
             <p className="text-sm text-[#8a7e6e]">Selecione pelo menos 3 gêneros</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 flex-1">
             {genres.map((genre) => {
-              const isSelected = selectedGenres.includes(genre.id);
+              const isSelected = selectedGenres.includes(genre.id)
               return (
                 <button
                   key={genre.id}
-                  onClick={() => {
-                    if (isSelected) {
-                      setSelectedGenres(selectedGenres.filter(g => g !== genre.id));
-                    } else {
-                      setSelectedGenres([...selectedGenres, genre.id]);
-                    }
-                  }}
+                  onClick={() =>
+                    setSelectedGenres(
+                      isSelected
+                        ? selectedGenres.filter((g) => g !== genre.id)
+                        : [...selectedGenres, genre.id],
+                    )
+                  }
                   className={`p-6 rounded-2xl border-2 transition-all ${
                     isSelected
                       ? 'border-[#c8a96e] bg-[#c8a96e]/10'
                       : 'border-[#c8a96e]/20 bg-[#1a1210]/50'
                   }`}
                 >
-                  <div className="text-4xl mb-2">{genre.emoji}</div>
+                  <div className="flex justify-center mb-3">
+                    <GenreIcon id={genre.id} size={40} />
+                  </div>
                   <div className="text-sm">{genre.name}</div>
                 </button>
-              );
+              )
             })}
           </div>
         </div>
@@ -180,35 +198,41 @@ export function Onboarding() {
         <div className="flex-1 flex flex-col px-6 py-8 pb-32">
           <div className="mb-8">
             <p className="text-xs text-[#8a7e6e] uppercase tracking-wider mb-2">Passo 4 de 5</p>
-            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>Estes te parecem familiares?</h2>
+            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+              Estes te parecem familiares?
+            </h2>
             <p className="text-sm text-[#8a7e6e]">Toque nos livros que você já leu ou ama</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3 flex-1">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((book) => {
-              const bookId = `book-${book}`;
-              const isSelected = selectedBooks.includes(bookId);
+              const bookId = `book-${book}`
+              const isSelected = selectedBooks.includes(bookId)
               return (
                 <button
                   key={book}
-                  onClick={() => {
-                    if (isSelected) {
-                      setSelectedBooks(selectedBooks.filter(b => b !== bookId));
-                    } else {
-                      setSelectedBooks([...selectedBooks, bookId]);
-                    }
-                  }}
+                  onClick={() =>
+                    setSelectedBooks(
+                      isSelected
+                        ? selectedBooks.filter((b) => b !== bookId)
+                        : [...selectedBooks, bookId],
+                    )
+                  }
                   className={`aspect-[2/3] rounded-lg transition-all overflow-hidden ${
                     isSelected ? 'ring-4 ring-[#c8a96e] scale-95' : 'ring-1 ring-[#c8a96e]/20'
                   }`}
                 >
-                  <div className={`w-full h-full bg-gradient-to-br ${
-                    book % 3 === 0 ? 'from-[#c8a96e] to-[#e8635a]' :
-                    book % 3 === 1 ? 'from-[#6a9fcf] to-[#b87cde]' :
-                    'from-[#7c9e7a] to-[#c8a96e]'
-                  }`}></div>
+                  <div
+                    className={`w-full h-full bg-gradient-to-br ${
+                      book % 3 === 0
+                        ? 'from-[#c8a96e] to-[#e8635a]'
+                        : book % 3 === 1
+                        ? 'from-[#6a9fcf] to-[#b87cde]'
+                        : 'from-[#7c9e7a] to-[#c8a96e]'
+                    }`}
+                  />
                 </button>
-              );
+              )
             })}
           </div>
 
@@ -223,14 +247,16 @@ export function Onboarding() {
         <div className="flex-1 flex flex-col px-6 py-8 pb-32">
           <div className="mb-8">
             <p className="text-xs text-[#8a7e6e] uppercase tracking-wider mb-2">Passo 5 de 5</p>
-            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>E hoje, como você quer se sentir?</h2>
+            <h2 className="text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+              E hoje, como você quer se sentir?
+            </h2>
             <p className="text-sm text-[#8a7e6e]">Escolha seu mood de leitura atual</p>
           </div>
 
           <div className="space-y-3 flex-1">
             {moods.map((mood) => {
-              const Icon = mood.icon;
-              const isSelected = selectedMood === mood.id;
+              const { Icon } = mood
+              const isSelected = selectedMood === mood.id
               return (
                 <button
                   key={mood.id}
@@ -249,7 +275,7 @@ export function Onboarding() {
                   </div>
                   <span className="text-lg">{mood.label}</span>
                 </button>
-              );
+              )
             })}
           </div>
         </div>
@@ -296,5 +322,5 @@ export function Onboarding() {
         </div>
       )}
     </div>
-  );
+  )
 }

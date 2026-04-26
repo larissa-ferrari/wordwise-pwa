@@ -1,34 +1,62 @@
-import React, { useState } from 'react';
-import { X, Star, Heart, Smile, Zap, Frown, Meh, Music } from 'lucide-react';
+import { useState } from 'react'
+import { X, Star, Heart, Smile, Zap, Frown, Meh, Music, BookOpen } from 'lucide-react'
 
 interface ReviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
+}
+
+const emotions = [
+  { id: 'love',     Icon: Heart, label: 'Me apaixonei',     color: '#e8635a' },
+  { id: 'cry',      Icon: Frown, label: 'Chorei',           color: '#6a9fcf' },
+  { id: 'laugh',    Icon: Smile, label: 'Ri muito',         color: '#c8a96e' },
+  { id: 'surprise', Icon: Zap,   label: 'Fui surpreendido', color: '#b87cde' },
+  { id: 'meh',      Icon: Meh,   label: 'Me irritei',       color: '#8a7e6e' },
+]
+
+const sampleBooks = [
+  { title: 'O Nome do Vento', author: 'Patrick Rothfuss', cover: 'from-[#c8a96e] to-[#e8635a]' },
+  { title: 'Neuromancer',      author: 'William Gibson',   cover: 'from-[#6a9fcf] to-[#b87cde]' },
+  { title: 'A Casa no Cerrado', author: 'Carla Madeira',   cover: 'from-[#7c9e7a] to-[#c8a96e]' },
+]
+
+const RATING_LABELS: Record<number, string> = {
+  5: 'Obra-prima!',
+  4: 'Adorei!',
+  3: 'Gostei',
+  2: 'Não é pra mim',
+  1: 'Decepcionante',
 }
 
 export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
-  const [step, setStep] = useState(1);
-  const [rating, setRating] = useState(0);
-  const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-  const [reviewText, setReviewText] = useState('');
+  const [step, setStep] = useState(1)
+  const [rating, setRating] = useState(0)
+  const [selectedEmotions, setSelectedEmotions] = useState<string[]>([])
+  const [reviewText, setReviewText] = useState('')
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
-  const emotions = [
-    { id: 'love', icon: Heart, label: 'Me apaixonei', color: '#e8635a' },
-    { id: 'cry', icon: Frown, label: 'Chorei', color: '#6a9fcf' },
-    { id: 'laugh', icon: Smile, label: 'Ri muito', color: '#c8a96e' },
-    { id: 'surprise', icon: Zap, label: 'Fui surpreendido', color: '#b87cde' },
-    { id: 'meh', icon: Meh, label: 'Me irritei', color: '#8a7e6e' },
-  ];
+  function toggleEmotion(id: string) {
+    setSelectedEmotions((prev) =>
+      prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id],
+    )
+  }
 
-  const handlePublish = () => {
-    onClose();
-    setStep(1);
-    setRating(0);
-    setSelectedEmotions([]);
-    setReviewText('');
-  };
+  function handlePublish() {
+    onClose()
+    setStep(1)
+    setRating(0)
+    setSelectedEmotions([])
+    setReviewText('')
+  }
+
+  const STEP_TITLES: Record<number, string> = {
+    1: 'Selecionar Livro',
+    2: 'Como você se sentiu?',
+    3: 'Avalie o livro',
+    4: 'Escreva sua review',
+    5: 'Adicione extras',
+  }
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end md:items-center justify-center">
@@ -36,11 +64,7 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
         {/* Header */}
         <div className="sticky top-0 bg-[#0a0807] border-b border-[#c8a96e]/20 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-            {step === 1 ? 'Selecionar Livro' :
-             step === 2 ? 'Como você se sentiu?' :
-             step === 3 ? 'Avalie o livro' :
-             step === 4 ? 'Escreva sua review' :
-             'Adicione extras'}
+            {STEP_TITLES[step]}
           </h2>
           <button
             onClick={onClose}
@@ -62,17 +86,13 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
             </div>
 
             <div className="space-y-3">
-              {[
-                { title: 'O Nome do Vento', author: 'Patrick Rothfuss', cover: 'from-[#c8a96e] to-[#e8635a]' },
-                { title: 'Neuromancer', author: 'William Gibson', cover: 'from-[#6a9fcf] to-[#b87cde]' },
-                { title: 'A Casa no Cerrado', author: 'Carla Madeira', cover: 'from-[#7c9e7a] to-[#c8a96e]' },
-              ].map((book, i) => (
+              {sampleBooks.map((book, i) => (
                 <button
                   key={i}
                   onClick={() => setStep(2)}
                   className="w-full p-3 bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-xl hover:border-[#c8a96e]/40 transition-all flex items-center gap-3"
                 >
-                  <div className={`w-12 h-16 rounded bg-gradient-to-br ${book.cover} flex-shrink-0`}></div>
+                  <div className={`w-12 h-16 rounded bg-gradient-to-br ${book.cover} flex-shrink-0`} />
                   <div className="text-left flex-1">
                     <h3 className="text-sm font-medium mb-1">{book.title}</h3>
                     <p className="text-xs text-[#8a7e6e]">{book.author}</p>
@@ -86,21 +106,16 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
         {/* Step 2: Emotions */}
         {step === 2 && (
           <div className="p-6">
-            <p className="text-sm text-[#8a7e6e] mb-4">Selecione todas as emoções que você sentiu</p>
+            <p className="text-sm text-[#8a7e6e] mb-4">
+              Selecione todas as emoções que você sentiu
+            </p>
             <div className="grid grid-cols-2 gap-3 mb-6">
-              {emotions.map((emotion) => {
-                const Icon = emotion.icon;
-                const isSelected = selectedEmotions.includes(emotion.id);
+              {emotions.map(({ id, Icon, label, color }) => {
+                const isSelected = selectedEmotions.includes(id)
                 return (
                   <button
-                    key={emotion.id}
-                    onClick={() => {
-                      if (isSelected) {
-                        setSelectedEmotions(selectedEmotions.filter(e => e !== emotion.id));
-                      } else {
-                        setSelectedEmotions([...selectedEmotions, emotion.id]);
-                      }
-                    }}
+                    key={id}
+                    onClick={() => toggleEmotion(id)}
                     className={`p-4 rounded-xl border-2 transition-all ${
                       isSelected
                         ? 'border-[#c8a96e] bg-[#c8a96e]/10'
@@ -109,13 +124,13 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                   >
                     <div
                       className="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center"
-                      style={{ backgroundColor: `${emotion.color}20` }}
+                      style={{ backgroundColor: `${color}20` }}
                     >
-                      <Icon size={24} style={{ color: emotion.color }} />
+                      <Icon size={24} style={{ color }} />
                     </div>
-                    <p className="text-xs">{emotion.label}</p>
+                    <p className="text-xs">{label}</p>
                   </button>
-                );
+                )
               })}
             </div>
             <button
@@ -140,7 +155,9 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                 >
                   <Star
                     size={48}
-                    className={star <= rating ? 'fill-[#c8a96e] text-[#c8a96e]' : 'text-[#8a7e6e]/30'}
+                    className={
+                      star <= rating ? 'fill-[#c8a96e] text-[#c8a96e]' : 'text-[#8a7e6e]/30'
+                    }
                   />
                 </button>
               ))}
@@ -148,10 +165,7 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
             {rating > 0 && (
               <div className="text-center mb-6">
                 <p className="text-2xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-                  {rating === 5 ? 'Obra-prima!' :
-                   rating === 4 ? 'Adorei!' :
-                   rating === 3 ? 'Gostei' :
-                   rating === 2 ? 'Não é pra mim' : 'Decepcionante'}
+                  {RATING_LABELS[rating]}
                 </p>
               </div>
             )}
@@ -201,15 +215,19 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
           </div>
         )}
 
-        {/* Step 5: Extras (Quotes & Soundtrack) */}
+        {/* Step 5: Extras */}
         {step === 5 && (
           <div className="p-6">
-            <p className="text-sm text-[#8a7e6e] mb-4">Adicione extras à sua review (opcional)</p>
+            <p className="text-sm text-[#8a7e6e] mb-4">
+              Adicione extras à sua review (opcional)
+            </p>
 
             <div className="space-y-4">
-              {/* Favorite Quote */}
               <div className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-xl p-4">
-                <h3 className="text-sm font-medium mb-2">📖 Citação favorita</h3>
+                <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <BookOpen size={16} className="text-[#c8a96e]" />
+                  Citação favorita
+                </h3>
                 <input
                   type="text"
                   placeholder="Digite uma frase marcante do livro..."
@@ -217,10 +235,9 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                 />
               </div>
 
-              {/* Soundtrack */}
               <div className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-xl p-4">
                 <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-                  <Music size={16} />
+                  <Music size={16} className="text-[#c8a96e]" />
                   Trilha sonora
                 </h3>
                 <p className="text-xs text-[#8a7e6e] mb-3">O que você ouvia enquanto lia?</p>
@@ -264,5 +281,5 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
         )}
       </div>
     </div>
-  );
+  )
 }

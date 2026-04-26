@@ -17,44 +17,44 @@ export const COLORS = {
 
 // ─── Aesthetics ───────────────────────────────────────────────────────────────
 
-export const AESTHETICS: Record<Aesthetic, { label: string; emoji: string; gradient: string }> = {
-  'dark-academia': { label: 'Dark Academia', emoji: '🕯️', gradient: 'from-[#2d1f0e] to-[#1a1210]' },
-  cottagecore: { label: 'Cottagecore Literário', emoji: '🌿', gradient: 'from-[#2d3d1f] to-[#1a2410]' },
-  minimalist: { label: 'Minimalista Urbano', emoji: '⬜', gradient: 'from-[#1f1f2e] to-[#0a0a15]' },
-  fantasy: { label: 'Fantasia Vibrante', emoji: '✨', gradient: 'from-[#2d1040] to-[#1a0a20]' },
+export const AESTHETICS: Record<Aesthetic, { label: string; gradient: string }> = {
+  'dark-academia': { label: 'Dark Academia',        gradient: 'from-[#2d1f0e] to-[#1a1210]' },
+  cottagecore:     { label: 'Cottagecore Literário', gradient: 'from-[#2d3d1f] to-[#1a2410]' },
+  minimalist:      { label: 'Minimalista Urbano',    gradient: 'from-[#1f1f2e] to-[#0a0a15]' },
+  fantasy:         { label: 'Fantasia Vibrante',     gradient: 'from-[#2d1040] to-[#1a0a20]' },
 }
 
 // ─── Genres ───────────────────────────────────────────────────────────────────
 
-export const GENRES: Array<{ value: Genre; emoji: string }> = [
-  { value: 'Fantasy', emoji: '🧙' },
-  { value: 'Romance', emoji: '💕' },
-  { value: 'Thriller', emoji: '🔪' },
-  { value: 'Literary', emoji: '📖' },
-  { value: 'Sci-Fi', emoji: '🚀' },
-  { value: 'Horror', emoji: '👻' },
-  { value: 'Non-Fiction', emoji: '🎓' },
-  { value: 'Manga', emoji: '🇯🇵' },
+export const GENRES: Array<{ value: Genre; iconId: string }> = [
+  { value: 'Fantasy',     iconId: 'fantasy'    },
+  { value: 'Romance',     iconId: 'romance'    },
+  { value: 'Thriller',    iconId: 'thriller'   },
+  { value: 'Literary',    iconId: 'literary'   },
+  { value: 'Sci-Fi',      iconId: 'scifi'      },
+  { value: 'Horror',      iconId: 'horror'     },
+  { value: 'Non-Fiction', iconId: 'nonfiction' },
+  { value: 'Manga',       iconId: 'manga'      },
 ]
 
 // ─── Emotions ─────────────────────────────────────────────────────────────────
 
-export const EMOTIONS: Record<Emotion, { label: string; emoji: string; color: string }> = {
-  love: { label: 'Me apaixonei', emoji: '❤️', color: '#e8635a' },
-  cried: { label: 'Chorei', emoji: '😢', color: '#6a9fcf' },
-  laughed: { label: 'Ri muito', emoji: '😄', color: '#c8a96e' },
-  surprised: { label: 'Fui surpreendido', emoji: '⚡', color: '#b87cde' },
-  irritated: { label: 'Me irritei', emoji: '😐', color: '#7c9e7a' },
+export const EMOTIONS: Record<Emotion, { label: string; color: string }> = {
+  love:      { label: 'Me apaixonei',     color: '#e8635a' },
+  cried:     { label: 'Chorei',           color: '#6a9fcf' },
+  laughed:   { label: 'Ri muito',         color: '#c8a96e' },
+  surprised: { label: 'Fui surpreendido', color: '#b87cde' },
+  irritated: { label: 'Me irritei',       color: '#7c9e7a' },
 }
 
 // ─── Reading Moods ────────────────────────────────────────────────────────────
 
-export const READING_MOODS: Record<ReadingMood, { label: string; emoji: string; color: string }> = {
-  escape: { label: 'Quero escapar', emoji: '🌟', color: '#b87cde' },
-  learn: { label: 'Quero aprender', emoji: '📚', color: '#6a9fcf' },
-  cry: { label: 'Quero chorar', emoji: '💔', color: '#e8635a' },
-  laugh: { label: 'Quero rir', emoji: '😄', color: '#c8a96e' },
-  challenge: { label: 'Quero ser desafiado', emoji: '⚡', color: '#7c9e7a' },
+export const READING_MOODS: Record<ReadingMood, { label: string; color: string }> = {
+  escape:    { label: 'Quero escapar',       color: '#b87cde' },
+  learn:     { label: 'Quero aprender',      color: '#6a9fcf' },
+  cry:       { label: 'Quero chorar',        color: '#e8635a' },
+  laugh:     { label: 'Quero rir',           color: '#c8a96e' },
+  challenge: { label: 'Quero ser desafiado', color: '#7c9e7a' },
 }
 
 // ─── Rating labels ────────────────────────────────────────────────────────────

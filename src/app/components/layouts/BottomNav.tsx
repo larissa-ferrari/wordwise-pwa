@@ -1,32 +1,42 @@
-import React from 'react';
-import { Home, Compass, PlusCircle, BookMarked, User } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Home, Compass, PlusCircle, BookMarked, User } from 'lucide-react'
+import { useReviewModal } from '../../context/ReviewModalContext'
 
-interface BottomNavProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-}
+const TABS = [
+  { id: 'feed',     path: '/feed',     Icon: Home,       label: 'Feed'      },
+  { id: 'discover', path: '/discover', Icon: Compass,    label: 'Descobrir' },
+  { id: 'review',   path: null,        Icon: PlusCircle, label: 'Review'    },
+  { id: 'shelves',  path: '/shelves',  Icon: BookMarked, label: 'Estantes'  },
+  { id: 'profile',  path: '/profile',  Icon: User,       label: 'Perfil'    },
+] as const
 
-export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
-  const tabs = [
-    { id: 'feed', icon: Home, label: 'Feed' },
-    { id: 'discover', icon: Compass, label: 'Descobrir' },
-    { id: 'review', icon: PlusCircle, label: 'Review' },
-    { id: 'shelves', icon: BookMarked, label: 'Estantes' },
-    { id: 'profile', icon: User, label: 'Perfil' },
-  ];
+export function BottomNav() {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const { open } = useReviewModal()
+
+  const activeId = TABS.find(t => t.path && pathname.startsWith(t.path))?.id ?? ''
+
+  function handlePress(tab: (typeof TABS)[number]) {
+    if (tab.id === 'review') {
+      open()
+    } else if (tab.path) {
+      navigate(tab.path)
+    }
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-[#1a1210] border-t border-[#c8a96e]/20 px-4 pb-safe z-50">
       <div className="max-w-md mx-auto flex items-center justify-around h-16">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          const isReview = tab.id === 'review';
+        {TABS.map((tab) => {
+          const { Icon } = tab
+          const isActive = activeId === tab.id
+          const isReview = tab.id === 'review'
 
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handlePress(tab)}
               className={`flex flex-col items-center justify-center min-w-[56px] transition-all ${
                 isReview ? 'relative -mt-8' : ''
               }`}
@@ -60,9 +70,9 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                 {tab.label}
               </span>
             </button>
-          );
+          )
         })}
       </div>
     </nav>
-  );
+  )
 }

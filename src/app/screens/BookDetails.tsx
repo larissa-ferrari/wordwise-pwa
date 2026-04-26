@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Star, Heart, Share2, Plus } from 'lucide-react'
+import { ArrowLeft, Star, Heart, Share2, Plus, BookOpen } from 'lucide-react'
 import { EmotionIcon, UserAvatar } from '../components/icons'
 import type { EmotionId } from '../components/icons'
 
@@ -45,6 +45,15 @@ const topReviews = [
     emotions: ['love', 'surprised'] as EmotionId[],
     timeAgo: '1 mês atrás',
   },
+  {
+    user: { name: 'Mariana Luz', verified: true },
+    rating: 5,
+    text: 'Uma obra que redefine o que a fantasia pode ser. A linguagem é cirúrgica, a magia é intrigante, e a jornada emocional de Kvothe é inesquecível.',
+    likes: 64,
+    helpful: 89,
+    emotions: ['love', 'absorbed'] as EmotionId[],
+    timeAgo: '3 semanas atrás',
+  },
 ]
 
 export function BookDetails() {
@@ -54,206 +63,211 @@ export function BookDetails() {
   return (
     <div className="min-h-screen bg-[#0a0807] text-white">
       {/* Header */}
-      <header className="sticky top-0 bg-[#0a0807]/95 backdrop-blur-sm border-b border-[#c8a96e]/20 px-6 py-4 z-40">
+      <header className="sticky top-0 bg-[#0a0807]/95 backdrop-blur-sm border-b border-[#c8a96e]/20 px-6 lg:px-8 py-4 z-30">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-[#1a1210] flex items-center justify-center"
+            className="w-9 h-9 rounded-full bg-[#1a1210] flex items-center justify-center flex-shrink-0 hover:bg-[#c8a96e]/10 transition-colors"
           >
-            <ArrowLeft size={20} className="text-[#c8a96e]" />
+            <ArrowLeft size={18} className="text-[#c8a96e]" />
           </button>
-          <div className="flex-1">
-            <h1 className="text-lg line-clamp-1">{book.title}</h1>
-            <p className="text-xs text-[#8a7e6e] line-clamp-1">{book.author}</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-base lg:text-lg font-medium line-clamp-1">{book.title}</h1>
+            <p className="text-xs text-[#8a7e6e]">{book.author}</p>
           </div>
-          <button className="w-10 h-10 rounded-full bg-[#1a1210] flex items-center justify-center">
-            <Share2 size={20} className="text-[#c8a96e]" />
+          <button className="w-9 h-9 rounded-full bg-[#1a1210] flex items-center justify-center hover:bg-[#c8a96e]/10 transition-colors">
+            <Share2 size={18} className="text-[#c8a96e]" />
           </button>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-6 py-6 pb-24">
-        {/* Hero */}
-        <div className="mb-8">
-          <div className="flex gap-6 mb-6">
-            <div
-              className={`w-32 h-48 rounded-xl bg-gradient-to-br ${book.cover} flex-shrink-0 shadow-2xl shadow-[#c8a96e]/20`}
-            />
-            <div className="flex-1">
-              <div className="mb-3">
-                <h2 className="text-2xl mb-1" style={{ fontFamily: 'Playfair Display, serif' }}>
+      {/* ── Body: stacked on mobile, 2-col on xl ── */}
+      <div className="xl:grid xl:grid-cols-[420px_1fr]">
+
+        {/* ── Left: book info ── */}
+        <div className="px-6 lg:px-8 py-6 xl:border-r xl:border-[#c8a96e]/10">
+          <div className="xl:sticky xl:top-[73px]">
+
+            {/* Hero */}
+            <div className="flex gap-6 mb-6">
+              <div
+                className={`w-28 h-44 lg:w-36 lg:h-56 xl:w-44 xl:h-64 rounded-2xl bg-gradient-to-br ${book.cover} flex-shrink-0 shadow-2xl shadow-[#c8a96e]/15`}
+              />
+              <div className="flex-1 min-w-0">
+                <h2
+                  className="text-xl lg:text-2xl mb-1 leading-tight"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
+                >
                   {book.title}
                 </h2>
-                <p className="text-sm text-[#c8a96e] mb-1">{book.author}</p>
-                <p className="text-xs text-[#8a7e6e]">{book.series}</p>
-              </div>
+                <p className="text-sm text-[#c8a96e] mb-0.5">{book.author}</p>
+                <p className="text-xs text-[#8a7e6e] mb-4">{book.series}</p>
 
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center gap-1">
-                  <Star size={18} className="fill-[#c8a96e] text-[#c8a96e]" />
-                  <span className="text-xl font-bold text-[#c8a96e]">{book.rating}</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <Star size={16} className="fill-[#c8a96e] text-[#c8a96e]" />
+                  <span className="text-lg font-bold text-[#c8a96e]">{book.rating}</span>
+                  <span className="text-xs text-[#8a7e6e]">
+                    ({book.totalRatings.toLocaleString()})
+                  </span>
                 </div>
-                <span className="text-sm text-[#8a7e6e]">
-                  ({book.totalRatings.toLocaleString()} avaliações)
-                </span>
-              </div>
 
-              <div className="text-xs text-[#8a7e6e] space-y-1">
-                <p>{book.pages} páginas · {book.published}</p>
+                <p className="text-xs text-[#8a7e6e]">{book.pages} páginas · {book.published}</p>
+              </div>
+            </div>
+
+            {/* Genres */}
+            <div className="flex flex-wrap gap-2 mb-5">
+              {book.genres.map((genre, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 bg-[#c8a96e]/10 border border-[#c8a96e]/30 rounded-full text-xs text-[#c8a96e]"
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
+
+            {/* Action buttons */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <button className="py-2.5 bg-gradient-to-r from-[#c8a96e] to-[#e8d4a8] text-[#1a1210] rounded-full font-medium text-sm flex items-center justify-center gap-2">
+                <Plus size={16} />
+                Adicionar
+              </button>
+              <button
+                onClick={() => setIsWishlisted(!isWishlisted)}
+                className={`py-2.5 rounded-full font-medium text-sm flex items-center justify-center gap-2 transition-all ${
+                  isWishlisted
+                    ? 'bg-[#e8635a] text-white'
+                    : 'border-2 border-[#c8a96e] text-[#c8a96e] hover:bg-[#c8a96e]/10'
+                }`}
+              >
+                <Heart size={16} className={isWishlisted ? 'fill-white' : ''} />
+                {isWishlisted ? 'Salvo' : 'Salvar'}
+              </button>
+            </div>
+
+            {/* Description */}
+            <div className="mb-5">
+              <h3 className="text-base mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Sinopse
+              </h3>
+              <p className="text-sm text-[#e8d4a8]/85 leading-relaxed">{book.description}</p>
+            </div>
+
+            {/* Tropes */}
+            <div>
+              <h3 className="text-base mb-3" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Tropes
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {book.tropes.map((trope, i) => (
+                  <button
+                    key={i}
+                    className="px-3 py-1.5 bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-full text-xs hover:border-[#c8a96e] hover:bg-[#c8a96e]/10 transition-all"
+                  >
+                    {trope}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
-
-          <div className="flex flex-wrap gap-2 mb-6">
-            {book.genres.map((genre, i) => (
-              <span
-                key={i}
-                className="px-3 py-1 bg-[#c8a96e]/10 border border-[#c8a96e]/30 rounded-full text-xs text-[#c8a96e]"
-              >
-                {genre}
-              </span>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button className="py-3 bg-gradient-to-r from-[#c8a96e] to-[#e8d4a8] text-[#1a1210] rounded-full font-medium flex items-center justify-center gap-2">
-              <Plus size={20} />
-              Adicionar à estante
-            </button>
-            <button
-              onClick={() => setIsWishlisted(!isWishlisted)}
-              className={`py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-all ${
-                isWishlisted
-                  ? 'bg-[#e8635a] text-white'
-                  : 'border-2 border-[#c8a96e] text-[#c8a96e]'
-              }`}
-            >
-              <Heart size={20} className={isWishlisted ? 'fill-white' : ''} />
-              {isWishlisted ? 'Na lista' : 'Salvar'}
-            </button>
-          </div>
         </div>
 
-        {/* Description */}
-        <section className="mb-8">
-          <h3 className="text-lg mb-3" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Sinopse
-          </h3>
-          <p className="text-sm text-[#e8d4a8]/90 leading-relaxed">{book.description}</p>
-        </section>
+        {/* ── Right: emotions + reviews ── */}
+        <div className="px-6 lg:px-8 py-6 xl:py-6 space-y-8">
 
-        {/* Tropes */}
-        <section className="mb-8">
-          <h3 className="text-lg mb-3" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Tropes
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {book.tropes.map((trope, i) => (
-              <button
-                key={i}
-                className="px-4 py-2 bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-full text-xs hover:border-[#c8a96e] hover:bg-[#c8a96e]/10 transition-all"
-              >
-                {trope}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Emotion Breakdown */}
-        <section className="mb-8">
-          <h3 className="text-lg mb-3" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Como os leitores se sentiram
-          </h3>
-          <div className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-2xl p-6 space-y-3">
-            {emotionBreakdown.map((item) => (
-              <div key={item.id}>
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-[#e8d4a8] flex items-center gap-2">
-                    <EmotionIcon id={item.id} size={16} />
-                    {item.label}
-                  </span>
-                  <span className="text-[#8a7e6e]">{item.count} pessoas</span>
-                </div>
-                <div className="h-2 bg-[#8a7e6e]/20 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#c8a96e] to-[#e8d4a8] rounded-full"
-                    style={{ width: `${item.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Reviews */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Reviews em destaque
+          {/* Emotion breakdown */}
+          <section>
+            <h3 className="text-lg mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+              Como os leitores se sentiram
             </h3>
-            <button className="text-sm text-[#c8a96e]">Ver todas</button>
-          </div>
-
-          <div className="space-y-4">
-            {topReviews.map((review, i) => (
-              <div
-                key={i}
-                className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-2xl p-4"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <UserAvatar name={review.user.name} size="md" />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-medium">{review.user.name}</h4>
-                      {review.user.verified && (
-                        <Star size={12} className="fill-[#c8a96e] text-[#c8a96e]" />
-                      )}
-                    </div>
-                    <p className="text-xs text-[#8a7e6e]">{review.timeAgo}</p>
+            <div className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-2xl p-5 space-y-3">
+              {emotionBreakdown.map((item) => (
+                <div key={item.id}>
+                  <div className="flex items-center justify-between text-sm mb-1.5">
+                    <span className="text-[#e8d4a8] flex items-center gap-2">
+                      <EmotionIcon id={item.id} size={15} />
+                      {item.label}
+                    </span>
+                    <span className="text-[#8a7e6e] text-xs">{item.count.toLocaleString()} pessoas</span>
+                  </div>
+                  <div className="h-1.5 bg-[#8a7e6e]/20 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#c8a96e] to-[#e8d4a8] rounded-full"
+                      style={{ width: `${item.percentage}%` }}
+                    />
                   </div>
                 </div>
+              ))}
+            </div>
+          </section>
 
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex gap-1">
-                    {[...Array(5)].map((_, j) => (
-                      <Star
-                        key={j}
-                        size={14}
-                        className={
-                          j < review.rating
-                            ? 'fill-[#c8a96e] text-[#c8a96e]'
-                            : 'text-[#8a7e6e]/30'
-                        }
-                      />
-                    ))}
+          {/* Reviews */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Reviews em destaque
+              </h3>
+              <button className="text-sm text-[#c8a96e]">Ver todas</button>
+            </div>
+
+            <div className="space-y-4">
+              {topReviews.map((review, i) => (
+                <div
+                  key={i}
+                  className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-2xl p-4 hover:border-[#c8a96e]/35 transition-colors"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <UserAvatar name={review.user.name} size="md" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-medium">{review.user.name}</h4>
+                        {review.user.verified && (
+                          <Star size={11} className="fill-[#c8a96e] text-[#c8a96e]" />
+                        )}
+                      </div>
+                      <p className="text-xs text-[#8a7e6e]">{review.timeAgo}</p>
+                    </div>
+                    <div className="flex gap-0.5 flex-shrink-0">
+                      {[...Array(5)].map((_, j) => (
+                        <Star
+                          key={j}
+                          size={12}
+                          className={j < review.rating ? 'fill-[#c8a96e] text-[#c8a96e]' : 'text-[#8a7e6e]/30'}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex gap-1.5">
+
+                  <div className="flex gap-1.5 mb-3">
                     {review.emotions.map((id) => (
                       <EmotionIcon key={id} id={id} size={14} />
                     ))}
                   </div>
-                </div>
 
-                <p className="text-sm text-[#e8d4a8]/90 leading-relaxed mb-3">{review.text}</p>
+                  <p className="text-sm text-[#e8d4a8]/90 leading-relaxed mb-3">{review.text}</p>
 
-                <div className="flex items-center gap-4 text-xs text-[#8a7e6e]">
-                  <button className="flex items-center gap-1 hover:text-[#e8635a] transition-colors">
-                    <Heart size={14} />
-                    {review.likes}
-                  </button>
-                  <span>{review.helpful}% acharam útil</span>
+                  <div className="flex items-center gap-4 text-xs text-[#8a7e6e]">
+                    <button className="flex items-center gap-1.5 hover:text-[#e8635a] transition-colors">
+                      <Heart size={13} />
+                      {review.likes}
+                    </button>
+                    <span>{review.helpful}% acharam útil</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </section>
+
+          {/* CTA */}
+          <div className="bg-gradient-to-br from-[#1a1210] to-[#2a1f1a] border border-[#c8a96e]/20 rounded-2xl p-6 text-center">
+            <BookOpen size={28} className="text-[#c8a96e] mx-auto mb-3" />
+            <p className="text-sm text-[#8a7e6e] mb-4">Já leu este livro?</p>
+            <button className="px-8 py-3 bg-gradient-to-r from-[#c8a96e] to-[#e8d4a8] text-[#1a1210] rounded-full font-medium hover:opacity-90 transition-opacity">
+              Escrever uma review
+            </button>
           </div>
-        </section>
 
-        {/* CTA */}
-        <div className="mt-8 bg-gradient-to-br from-[#1a1210] to-[#2a1f1a] border border-[#c8a96e]/20 rounded-2xl p-6 text-center">
-          <p className="text-sm text-[#8a7e6e] mb-4">Já leu este livro?</p>
-          <button className="px-8 py-3 bg-gradient-to-r from-[#c8a96e] to-[#e8d4a8] text-[#1a1210] rounded-full font-medium">
-            Escrever uma review
-          </button>
         </div>
       </div>
     </div>

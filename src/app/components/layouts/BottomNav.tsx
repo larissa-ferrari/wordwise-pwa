@@ -26,7 +26,7 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-[#1a1210] border-t border-[#c8a96e]/20 px-4 pb-safe z-50">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#1a1210] border-t border-[#c8a96e]/20 px-4 pb-safe z-50">
       <div className="max-w-md mx-auto flex items-center justify-around h-16">
         {TABS.map((tab) => {
           const { Icon } = tab

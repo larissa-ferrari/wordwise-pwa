@@ -1,34 +1,97 @@
-# Dependencies
+# ── Frontend ─────────────────────────────────────────
 node_modules/
 .pnpm-store/
-
-# Build outputs
 dist/
 build/
+*.tsbuildinfo
+.vite/
+.eslintcache
 
-# Environment
+# ── Backend: ambiente virtual ─────────────────────────
+backend/.venv/
+backend/venv/
+backend/env/
+
+# ── Backend: Python cache ─────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+*.egg
+dist/
+.eggs/
+
+# ── Backend: segredos e configuração local ────────────
+backend/.env
 .env
 .env.local
 .env.*.local
 
-# Editor
+# ── Backend: Alembic (migrações geradas localmente) ───
+# Descomente se não quiser versionar as migrations:
+# backend/alembic/versions/*.py
+
+# ── Backend: uploads e arquivos temporários ──────────
+backend/uploads/
+backend/tmp/
+backend/*.db
+backend/*.sqlite3
+
+# ── Logs ─────────────────────────────────────────────
+*.log
+*.log.*
+npm-debug.log*
+pnpm-debug.log*
+uvicorn*.log
+pip-log.txt
+
+# ── Editores e IDEs ───────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sublime-project
+*.sublime-workspace
 
-# OS
+# ── Sistema operacional ───────────────────────────────
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
+# ── Testes e cobertura ────────────────────────────────
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
 
-# TypeScript
-*.tsbuildinfo
+# ── Jupyter (caso usado para análise) ────────────────
+.ipynb_checkpoints/
+*.ipynb
 
-# Cache
-.eslintcache
-.vite/
+# ── Build / pacotes Python ────────────────────────────
+*.whl
+*.tar.gz
+MANIFEST
+
+# ── Claude Code (sessões locais) ──────────────────────
+.claude/
+
+# ── Artefatos de design / tema ────────────────────────
+default_shadcn_theme.css

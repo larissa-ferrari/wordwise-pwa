@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WordWise — Diagrama do Banco de Dados</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --ink:        #0a0807;
+      --surface:    #1a1210;
+      --surface-2:  #2a1f1a;
+      --gold:       #c8a96e;
+      --gold-light: #e8d4a8;
+      --red:        #e8635a;
+      --purple:     #b87cde;
+      --blue:       #6a9fcf;
+      --green:      #7c9e7a;
+      --muted:      #8a7e6e;
+      --border:     rgba(200,169,110,.2);
+      --border-dim: rgba(138,126,110,.12);
+      --mono:       "Courier New", Consolas, monospace;
+      --serif:      "Georgia", "Times New Roman", serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--ink);
+      color: var(--gold-light);
+      font-family: var(--serif);
+      min-height: 100vh;
+      padding: 48px 24px 64px;
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    .page-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .page-header h1 {
+      font-size: 2.6rem;
+      letter-spacing: -.5px;
+      margin-bottom: 6px;
+    }
+    .page-header h1 .w { color: var(--gold); }
+    .page-header h1 .w2 { color: var(--gold-light); }
+    .page-header p {
+      color: var(--muted);
+      font-size: .85rem;
+      font-family: var(--mono);
+    }
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 14px auto 0;
+    }
+
+    /* ── Section title ───────────────────────────── */
+    .sec-title {
+      font-size: 1.1rem;
+      color: var(--gold);
+      font-family: var(--mono);
+      letter-spacing: .04em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sec-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    section { margin-bottom: 52px; }
+
+    /* ── ER Diagram ──────────────────────────────── */
+    .diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 16px;
+      overflow-x: auto;
+    }
+    .diagram-wrap .mermaid {
+      min-width: 900px;
+    }
+
+    /* ── Tables grid ─────────────────────────────── */
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .tcard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .tcard-head {
+      background: linear-gradient(135deg, var(--surface-2), var(--surface));
+      border-bottom: 1px solid var(--border);
+      padding: 11px 16px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .tcard-name {
+      font-family: var(--mono);
+      font-size: .9rem;
+      font-weight: bold;
+      color: var(--gold);
+    }
+    .tcard-meta {
+      font-family: var(--mono);
+      font-size: .67rem;
+      color: var(--muted);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .col-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-bottom: 1px solid var(--border-dim);
+      font-family: var(--mono);
+      font-size: .75rem;
+    }
+    .col-row:last-child { border-bottom: none; }
+
+    .col-badges { width: 48px; flex-shrink: 0; display: flex; gap: 3px; }
+    .col-name  { flex: 1; color: var(--gold-light); }
+    .col-type  { color: var(--muted); font-size: .7rem; text-align: right; }
+
+    .badge {
+      font-size: .58rem;
+      font-weight: bold;
+      padding: 1px 4px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    .pk { background: rgba(200,169,110,.18); color: var(--gold);   border: 1px solid rgba(200,169,110,.35); }
+    .fk { background: rgba(106,159,207,.15); color: var(--blue);   border: 1px solid rgba(106,159,207,.3);  }
+    .uk { background: rgba(124,158,122,.15); color: var(--green);  border: 1px solid rgba(124,158,122,.3);  }
+
+    /* ── Relationships table ─────────────────────── */
+    .rel-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    table.rel {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: .78rem;
+    }
+    table.rel thead tr {
+      background: var(--surface-2);
+    }
+    table.rel th {
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: normal;
+      font-size: .68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      border-bottom: 1px solid var(--border);
+    }
+    table.rel td {
+      padding: 9px 16px;
+      border-bottom: 1px solid var(--border-dim);
+      vertical-align: middle;
+    }
+    table.rel tr:last-child td { border-bottom: none; }
+    table.rel tr:hover td { background: rgba(200,169,110,.03); }
+    .rf { color: var(--gold-light); }
+    .rt { color: var(--blue); }
+    .ra { color: var(--muted); font-size: 1rem; }
+    .rc { color: var(--green); }
+    .rd { color: var(--red); }
+    .ri { color: var(--muted); font-size: .68rem; font-style: italic; }
+
+    /* ── Enums ───────────────────────────────────── */
+    .enums-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .enum-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .enum-head {
+      background: var(--surface-2);
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: .77rem;
+      color: var(--gold);
+    }
+    .enum-head span {
+      color: var(--muted);
+      font-size: .68rem;
+    }
+    .enum-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .ev {
+      font-family: var(--mono);
+      font-size: .7rem;
+      padding: 3px 9px;
+      background: rgba(200,169,110,.07);
+      border: 1px solid rgba(200,169,110,.18);
+      border-radius: 4px;
+      color: var(--gold-light);
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: .75rem;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-dim);
+    }
+    footer strong { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="page-header">
+  <h1><span class="w">Word</span><span class="w2">Wise</span></h1>
+  <p>Diagrama do Banco de Dados · MySQL · SQLAlchemy 2.0 · FastAPI</p>
+  <div class="divider"></div>
+</div>
+
+<!-- ══════════ MERMAID ER DIAGRAM ══════════ -->
+<section>
+  <p class="sec-title">Diagrama Entidade-Relacionamento</p>
+  <div class="diagram-wrap">
+    <div class="mermaid">
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "background":          "#0a0807",
+    "primaryColor":        "#2a1f1a",
+    "primaryTextColor":    "#e8d4a8",
+    "primaryBorderColor":  "#c8a96e",
+    "lineColor":           "#c8a96e",
+    "secondaryColor":      "#1a1210",
+    "tertiaryColor":       "#0a0807",
+    "fontFamily":          "Courier New, monospace",
+    "fontSize":            "13px"
+  },
+  "er": { "layoutDirection": "TB", "diagramPadding": 30, "entityPadding": 14, "useMaxWidth": true }
+}}%%
+erDiagram
+    users {
+        CHAR36   id           PK
+        VARCHAR50  username   UK
+        VARCHAR255 email      UK
+        VARCHAR255 hashed_password
+        VARCHAR100 display_name
+        TEXT     bio
+        VARCHAR20  aesthetic
+        VARCHAR7   avatar_color
+        INT      reading_streak
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    user_follows {
+        CHAR36   follower_id  FK
+        CHAR36   following_id FK
+        DATETIME created_at
+    }
+    books {
+        CHAR36   id           PK
+        VARCHAR255 title
+        VARCHAR255 author
+        VARCHAR255 series
+        VARCHAR100 cover_gradient
+        TEXT     description
+        INT      pages
+        INT      published_year
+        VARCHAR20  isbn       UK
+        FLOAT    avg_rating
+        INT      rating_count
+        DATETIME created_at
+    }
+    book_genres {
+        CHAR36   id      PK
+        CHAR36   book_id FK
+        VARCHAR20  genre
+    }
+    tropes {
+        CHAR36   id   PK
+        VARCHAR100 name UK
+        VARCHAR100 slug UK
+    }
+    book_tropes {
+        CHAR36 book_id  FK
+        CHAR36 trope_id FK
+    }
+    reviews {
+        CHAR36   id             PK
+        CHAR36   user_id        FK
+        CHAR36   book_id        FK
+        FLOAT    rating
+        TEXT     text
+        TEXT     favorite_quote
+        INT      likes_count
+        INT      helpful_count
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    review_emotions {
+        CHAR36  id        PK
+        CHAR36  review_id FK
+        VARCHAR20 emotion
+    }
+    shelf_entries {
+        CHAR36  id           PK
+        CHAR36  user_id      FK
+        CHAR36  book_id      FK
+        VARCHAR10 shelf
+        INT     current_page
+        DATETIME added_at
+        DATETIME updated_at
+    }
+
+    users        ||--o{ user_follows    : "follower_id"
+    users        ||--o{ user_follows    : "following_id"
+    users        ||--o{ reviews         : "escreve"
+    users        ||--o{ shelf_entries   : "organiza"
+    books        ||--o{ book_genres     : "categorizado em"
+    books        ||--o{ book_tropes     : "contém trope"
+    books        ||--o{ reviews         : "recebe"
+    books        ||--o{ shelf_entries   : "guardado em"
+    tropes       ||--o{ book_tropes     : "aparece em"
+    reviews      ||--o{ review_emotions : "marcado com"
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TABLE REFERENCE ══════════ -->
+<section>
+  <p class="sec-title">Referência das Tabelas</p>
+  <div class="tables-grid">
+
+    <!-- users -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">users</span>
+        <span class="tcard-meta">11 colunas</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge uk">UK</span></span><span class="col-name">username</span><span class="col-type">VARCHAR(50)</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge uk">UK</span></span><span class="col-name">email</span><span class="col-type">VARCHAR(255)</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">hashed_password</span><span class="col-type">VARCHAR(255)</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">display_name</span><span class="col-type">VARCHAR(100)</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">bio</span><span class="col-type">TEXT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">aesthetic</span><span class="col-type">VARCHAR(20) · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">avatar_color</span><span class="col-type">VARCHAR(7) · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">reading_streak</span><span class="col-type">INT · default 0</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">created_at</span><span class="col-type">DATETIME · server default</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">updated_at</span><span class="col-type">DATETIME · onupdate</span></div>
+    </div>
+
+    <!-- user_follows -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">user_follows</span>
+        <span class="tcard-meta">3 colunas · PK composta</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span><span class="badge fk">FK</span></span><span class="col-name">follower_id</span><span class="col-type">CHAR(36) → users.id</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span><span class="badge fk">FK</span></span><span class="col-name">following_id</span><span class="col-type">CHAR(36) → users.id</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">created_at</span><span class="col-type">DATETIME</span></div>
+    </div>
+
+    <!-- books -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">books</span>
+        <span class="tcard-meta">12 colunas</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">author</span><span class="col-type">VARCHAR(255)</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">series</span><span class="col-type">VARCHAR(255) · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">cover_gradient</span><span class="col-type">VARCHAR(100) · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">description</span><span class="col-type">TEXT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">pages</span><span class="col-type">INT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">published_year</span><span class="col-type">INT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge uk">UK</span></span><span class="col-name">isbn</span><span class="col-type">VARCHAR(20) · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">avg_rating</span><span class="col-type">FLOAT · default 0.0</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">rating_count</span><span class="col-type">INT · default 0</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">created_at</span><span class="col-type">DATETIME</span></div>
+    </div>
+
+    <!-- tropes -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">tropes</span>
+        <span class="tcard-meta">3 colunas</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge uk">UK</span></span><span class="col-name">name</span><span class="col-type">VARCHAR(100)</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge uk">UK</span></span><span class="col-name">slug</span><span class="col-type">VARCHAR(100)</span></div>
+    </div>
+
+    <!-- book_genres -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">book_genres</span>
+        <span class="tcard-meta">3 colunas · UK(book_id, genre)</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge fk">FK</span></span><span class="col-name">book_id</span><span class="col-type">CHAR(36) → books.id</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">genre</span><span class="col-type">VARCHAR(20) · enum</span></div>
+    </div>
+
+    <!-- book_tropes -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">book_tropes</span>
+        <span class="tcard-meta">2 colunas · PK composta</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span><span class="badge fk">FK</span></span><span class="col-name">book_id</span><span class="col-type">CHAR(36) → books.id</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span><span class="badge fk">FK</span></span><span class="col-name">trope_id</span><span class="col-type">CHAR(36) → tropes.id</span></div>
+    </div>
+
+    <!-- reviews -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">reviews</span>
+        <span class="tcard-meta">10 colunas</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge fk">FK</span></span><span class="col-name">user_id</span><span class="col-type">CHAR(36) → users.id</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge fk">FK</span></span><span class="col-name">book_id</span><span class="col-type">CHAR(36) → books.id</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">rating</span><span class="col-type">FLOAT · 1.0–5.0</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">text</span><span class="col-type">TEXT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">favorite_quote</span><span class="col-type">TEXT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">likes_count</span><span class="col-type">INT · default 0</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">helpful_count</span><span class="col-type">INT · default 0</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">created_at</span><span class="col-type">DATETIME</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">updated_at</span><span class="col-type">DATETIME · onupdate</span></div>
+    </div>
+
+    <!-- review_emotions -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">review_emotions</span>
+        <span class="tcard-meta">3 colunas · UK(review_id, emotion)</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge fk">FK</span></span><span class="col-name">review_id</span><span class="col-type">CHAR(36) → reviews.id</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">emotion</span><span class="col-type">VARCHAR(20) · enum</span></div>
+    </div>
+
+    <!-- shelf_entries -->
+    <div class="tcard">
+      <div class="tcard-head">
+        <span class="tcard-name">shelf_entries</span>
+        <span class="tcard-meta">7 colunas · UK(user_id, book_id)</span>
+      </div>
+      <div class="col-row"><span class="col-badges"><span class="badge pk">PK</span></span><span class="col-name">id</span><span class="col-type">CHAR(36) · UUID</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge fk">FK</span></span><span class="col-name">user_id</span><span class="col-type">CHAR(36) → users.id</span></div>
+      <div class="col-row"><span class="col-badges"><span class="badge fk">FK</span></span><span class="col-name">book_id</span><span class="col-type">CHAR(36) → books.id</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">shelf</span><span class="col-type">VARCHAR(10) · enum</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">current_page</span><span class="col-type">INT · nullable</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">added_at</span><span class="col-type">DATETIME</span></div>
+      <div class="col-row"><span class="col-badges"></span><span class="col-name">updated_at</span><span class="col-type">DATETIME · onupdate</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ RELATIONSHIPS ══════════ -->
+<section>
+  <p class="sec-title">Relacionamentos (Foreign Keys)</p>
+  <div class="rel-wrap">
+    <table class="rel">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tabela de origem</th>
+          <th></th>
+          <th>Tabela destino</th>
+          <th>Cardinalidade</th>
+          <th>ON DELETE</th>
+          <th>Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rc">01</td>
+          <td class="rf">users.id</td>
+          <td class="ra">→</td>
+          <td class="rt">user_follows.follower_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Usuário que segue</td>
+        </tr>
+        <tr>
+          <td class="rc">02</td>
+          <td class="rf">users.id</td>
+          <td class="ra">→</td>
+          <td class="rt">user_follows.following_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Usuário seguido</td>
+        </tr>
+        <tr>
+          <td class="rc">03</td>
+          <td class="rf">users.id</td>
+          <td class="ra">→</td>
+          <td class="rt">reviews.user_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Autor da review</td>
+        </tr>
+        <tr>
+          <td class="rc">04</td>
+          <td class="rf">users.id</td>
+          <td class="ra">→</td>
+          <td class="rt">shelf_entries.user_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Dono da estante</td>
+        </tr>
+        <tr>
+          <td class="rc">05</td>
+          <td class="rf">books.id</td>
+          <td class="ra">→</td>
+          <td class="rt">book_genres.book_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Gêneros do livro (1-M)</td>
+        </tr>
+        <tr>
+          <td class="rc">06</td>
+          <td class="rf">books.id</td>
+          <td class="ra">→</td>
+          <td class="rt">book_tropes.book_id</td>
+          <td class="rc">N : M</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Pivot livro ↔ trope</td>
+        </tr>
+        <tr>
+          <td class="rc">07</td>
+          <td class="rf">tropes.id</td>
+          <td class="ra">→</td>
+          <td class="rt">book_tropes.trope_id</td>
+          <td class="rc">N : M</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Pivot livro ↔ trope</td>
+        </tr>
+        <tr>
+          <td class="rc">08</td>
+          <td class="rf">books.id</td>
+          <td class="ra">→</td>
+          <td class="rt">reviews.book_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Reviews do livro</td>
+        </tr>
+        <tr>
+          <td class="rc">09</td>
+          <td class="rf">books.id</td>
+          <td class="ra">→</td>
+          <td class="rt">shelf_entries.book_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Livro em estantes</td>
+        </tr>
+        <tr>
+          <td class="rc">10</td>
+          <td class="rf">reviews.id</td>
+          <td class="ra">→</td>
+          <td class="rt">review_emotions.review_id</td>
+          <td class="rc">1 : N</td>
+          <td class="rd">CASCADE</td>
+          <td class="ri">Emoções da review</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════ ENUM VALUES ══════════ -->
+<section>
+  <p class="sec-title">Valores Permitidos (Enums de aplicação)</p>
+  <div class="enums-grid">
+
+    <div class="enum-card">
+      <div class="enum-head">genre <span>· book_genres.genre</span></div>
+      <div class="enum-body">
+        <span class="ev">fantasy</span><span class="ev">romance</span><span class="ev">thriller</span>
+        <span class="ev">literary</span><span class="ev">scifi</span><span class="ev">horror</span>
+        <span class="ev">nonfiction</span><span class="ev">manga</span>
+      </div>
+    </div>
+
+    <div class="enum-card">
+      <div class="enum-head">emotion <span>· review_emotions.emotion</span></div>
+      <div class="enum-body">
+        <span class="ev">love</span><span class="ev">cried</span><span class="ev">laughed</span>
+        <span class="ev">surprised</span><span class="ev">irritated</span><span class="ev">absorbed</span>
+        <span class="ev">excited</span><span class="ev">peaceful</span>
+      </div>
+    </div>
+
+    <div class="enum-card">
+      <div class="enum-head">shelf <span>· shelf_entries.shelf</span></div>
+      <div class="enum-body">
+        <span class="ev">reading</span><span class="ev">read</span><span class="ev">want</span>
+      </div>
+    </div>
+
+    <div class="enum-card">
+      <div class="enum-head">aesthetic <span>· users.aesthetic</span></div>
+      <div class="enum-body">
+        <span class="ev">dark-academia</span><span class="ev">cottagecore</span>
+        <span class="ev">minimalist</span><span class="ev">fantasy</span><span class="ev">vibrant</span>
+      </div>
+    </div>
+
+    <div class="enum-card">
+      <div class="enum-head">reading_mood <span>· (aplicação)</span></div>
+      <div class="enum-body">
+        <span class="ev">escape</span><span class="ev">learn</span><span class="ev">cry</span>
+        <span class="ev">laugh</span><span class="ev">challenge</span><span class="ev">thrill</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <strong>WordWise</strong> · 9 tabelas · 10 foreign keys · todos os ON DELETE CASCADE · UUIDs como PK
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background:         '#0a0807',
+      primaryColor:       '#2a1f1a',
+      primaryTextColor:   '#e8d4a8',
+      primaryBorderColor: '#c8a96e',
+      lineColor:          '#c8a96e',
+      secondaryColor:     '#1a1210',
+      tertiaryColor:      '#0a0807',
+      fontFamily:         '"Courier New", monospace',
+      fontSize:           '13px',
+      attributeBackgroundColorOdd:  '#1a1210',
+      attributeBackgroundColorEven: '#2a1f1a',
+    },
+    er: {
+      layoutDirection: 'TB',
+      diagramPadding:  30,
+      entityPadding:   14,
+      useMaxWidth:     true,
+    },
+  });
+</script>
+</body>
+</html>

@@ -1,40 +1,48 @@
-import { useLocalStorage } from './useLocalStorage'
-import { STORAGE_KEYS } from '../constants'
-import type { ShelfEntry, ShelfType } from '../types'
+import { useCallback, useEffect, useState } from 'react'
+import { shelvesService } from '../services'
+import type { ApiShelfEntryOut } from '../services'
 
-/**
- * Manages the user's book shelves with local persistence.
- * Replace localStorage with API calls when backend is ready.
- */
-export function useShelves() {
-  const [entries, setEntries] = useLocalStorage<ShelfEntry[]>(STORAGE_KEYS.shelves, [])
+export function useShelves(shelf?: string) {
+  const [entries, setEntries]   = useState<ApiShelfEntryOut[]>([])
+  const [isLoading, setLoading] = useState(true)
+  const [error, setError]       = useState<string | null>(null)
 
-  const addToShelf = (entry: ShelfEntry) => {
-    setEntries((prev) => {
-      const existing = prev.findIndex((e) => e.bookId === entry.bookId)
-      if (existing >= 0) {
-        // Move to new shelf
-        const updated = [...prev]
-        updated[existing] = { ...updated[existing], shelf: entry.shelf }
-        return updated
-      }
-      return [...prev, entry]
-    })
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const data = await shelvesService.getAll(shelf)
+      setEntries(data)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Erro ao carregar estante')
+    } finally {
+      setLoading(false)
+    }
+  }, [shelf])
+
+  useEffect(() => { load() }, [load])
+
+  const addToShelf = async (bookId: string, shelfType: string, currentPage?: number) => {
+    await shelvesService.add({ book_id: bookId, shelf: shelfType, current_page: currentPage })
+    await load()
   }
 
-  const removeFromShelf = (bookId: string) => {
-    setEntries((prev) => prev.filter((e) => e.bookId !== bookId))
+  const updateProgress = async (entryId: string, currentPage: number) => {
+    await shelvesService.update(entryId, { current_page: currentPage })
+    await load()
   }
 
-  const updateProgress = (bookId: string, currentPage: number) => {
-    setEntries((prev) =>
-      prev.map((e) => (e.bookId === bookId ? { ...e, currentPage } : e))
-    )
+  const moveToShelf = async (entryId: string, newShelf: string) => {
+    await shelvesService.update(entryId, { shelf: newShelf })
+    await load()
   }
 
-  const getByShelf = (shelf: ShelfType) => entries.filter((e) => e.shelf === shelf)
+  const removeFromShelf = async (entryId: string) => {
+    await shelvesService.remove(entryId)
+    await load()
+  }
 
-  const getEntry = (bookId: string) => entries.find((e) => e.bookId === bookId) ?? null
+  const getByShelf = (shelfType: string) => entries.filter(e => e.shelf === shelfType)
+  const getEntry = (bookId: string) => entries.find(e => e.book.id === bookId) ?? null
 
-  return { entries, addToShelf, removeFromShelf, updateProgress, getByShelf, getEntry }
+  return { entries, isLoading, error, addToShelf, updateProgress, moveToShelf, removeFromShelf, getByShelf, getEntry }
 }

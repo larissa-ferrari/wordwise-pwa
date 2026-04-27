@@ -1,41 +1,35 @@
-/**
- * reviewsService
- *
- * Abstraction layer for review CRUD and social actions.
- * Replace implementations with real API calls when backend is ready.
- */
+import { api } from './api'
+import type { ApiReviewOut, ApiCursorPage } from './apiTypes'
 
-import type { Review, PaginatedResponse } from '../types'
-import { MOCK_REVIEWS } from './mockData'
+export interface CreateReviewData {
+  book_id:        string
+  rating:         number
+  text?:          string
+  favorite_quote?: string
+  emotions?:      string[]
+}
 
 export const reviewsService = {
-  async getFeed(): Promise<PaginatedResponse<Review>> {
-    return { data: MOCK_REVIEWS, nextCursor: null, total: MOCK_REVIEWS.length }
+  getFeed(cursor?: string) {
+    const qs = cursor ? `?cursor=${cursor}&limit=20` : '?limit=20'
+    return api.get<ApiCursorPage<ApiReviewOut>>(`/feed${qs}`)
   },
 
-  async getByBook(bookId: string): Promise<Review[]> {
-    return MOCK_REVIEWS.filter((r) => r.bookId === bookId)
+  getByBook(bookId: string, cursor?: string) {
+    const qs = new URLSearchParams({ book_id: bookId, limit: '20' })
+    if (cursor) qs.set('cursor', cursor)
+    return api.get<ApiCursorPage<ApiReviewOut>>(`/reviews?${qs}`)
   },
 
-  async getByUser(userId: string): Promise<Review[]> {
-    return MOCK_REVIEWS.filter((r) => r.userId === userId)
+  create(data: CreateReviewData) {
+    return api.post<ApiReviewOut>('/reviews', data)
   },
 
-  async create(data: Omit<Review, 'id' | 'likesCount' | 'commentsCount' | 'isLiked' | 'createdAt'>): Promise<Review> {
-    const review: Review = {
-      ...data,
-      id: `review-${Date.now()}`,
-      likesCount: 0,
-      commentsCount: 0,
-      isLiked: false,
-      createdAt: new Date().toISOString(),
-    }
-    // In production: POST /api/reviews
-    return review
+  like(reviewId: string) {
+    return api.post<void>(`/reviews/${reviewId}/like`)
   },
 
-  async toggleLike(reviewId: string): Promise<{ liked: boolean; count: number }> {
-    // In production: POST /api/reviews/:id/like
-    return { liked: true, count: 1 }
+  remove(reviewId: string) {
+    return api.delete(`/reviews/${reviewId}`)
   },
 }

@@ -1,16 +1,45 @@
-import { useState } from 'react'
-import type { Book } from '../types'
-import { MOCK_BOOKS } from '../services/mockData'
+import { useCallback, useEffect, useState } from 'react'
+import { booksService } from '../services'
+import type { ApiBookSummary, ApiBookOut } from '../services'
 
-/**
- * Provides access to books. In the future, swap mock data
- * for real API calls in booksService without touching hook callers.
- */
-export function useBooks() {
-  const [books] = useState<Book[]>(MOCK_BOOKS)
-  const [isLoading] = useState(false)
+export function useBooks(initialGenre?: string) {
+  const [books, setBooks]     = useState<ApiBookSummary[]>([])
+  const [isLoading, setLoading] = useState(true)
+  const [error, setError]     = useState<string | null>(null)
 
-  const getBook = (id: string) => books.find((b) => b.id === id) ?? null
+  const fetch = useCallback(async (q?: string, genre?: string) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await booksService.getAll({ q, genre: genre ?? initialGenre })
+      setBooks(res.items)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Erro ao carregar livros')
+    } finally {
+      setLoading(false)
+    }
+  }, [initialGenre])
 
-  return { books, isLoading, getBook }
+  useEffect(() => { fetch() }, [fetch])
+
+  const getBook = useCallback(
+    (id: string): Promise<ApiBookOut> => booksService.getById(id),
+    [],
+  )
+
+  return { books, isLoading, error, refetch: fetch, getBook }
+}
+
+export function useTrendingBooks(limit = 8) {
+  const [books, setBooks]       = useState<ApiBookSummary[]>([])
+  const [isLoading, setLoading] = useState(true)
+
+  useEffect(() => {
+    booksService.getTrending(limit)
+      .then(setBooks)
+      .catch(() => setBooks([]))
+      .finally(() => setLoading(false))
+  }, [limit])
+
+  return { books, isLoading }
 }

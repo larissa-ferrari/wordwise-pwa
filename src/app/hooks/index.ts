@@ -1,3 +1,3 @@
 export { useLocalStorage } from './useLocalStorage'
-export { useBooks } from './useBooks'
+export { useBooks, useTrendingBooks } from './useBooks'
 export { useShelves } from './useShelves'

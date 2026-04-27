@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.routers import auth, users, books, reviews, shelves, feed
+from app.routers import auth, users, books, reviews, shelves, feed, admin
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ app.include_router(books.router)
 app.include_router(reviews.router)
 app.include_router(shelves.router)
 app.include_router(feed.router)
+app.include_router(admin.router)
 
 
 @app.get("/health")

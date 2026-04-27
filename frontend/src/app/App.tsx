@@ -7,20 +7,33 @@ import { ReviewModalProvider } from './context/ReviewModalContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { useOnboarding } from './context/OnboardingContext'
 
-const Onboarding  = React.lazy(() => import('./screens/Onboarding').then(m  => ({ default: m.Onboarding  })))
-const Feed        = React.lazy(() => import('./screens/Feed').then(m        => ({ default: m.Feed        })))
-const Discover    = React.lazy(() => import('./screens/Discover').then(m    => ({ default: m.Discover    })))
-const Shelves     = React.lazy(() => import('./screens/Shelves').then(m     => ({ default: m.Shelves     })))
-const Profile     = React.lazy(() => import('./screens/Profile').then(m     => ({ default: m.Profile     })))
-const BookDetails = React.lazy(() => import('./screens/BookDetails').then(m => ({ default: m.BookDetails })))
-const BrandGuide  = React.lazy(() => import('./screens/BrandGuide').then(m  => ({ default: m.BrandGuide  })))
-const Login       = React.lazy(() => import('./screens/Login').then(m       => ({ default: m.Login       })))
-const Register    = React.lazy(() => import('./screens/Register').then(m    => ({ default: m.Register    })))
+const Onboarding      = React.lazy(() => import('./screens/Onboarding').then(m      => ({ default: m.Onboarding      })))
+const Feed            = React.lazy(() => import('./screens/Feed').then(m            => ({ default: m.Feed            })))
+const Discover        = React.lazy(() => import('./screens/Discover').then(m        => ({ default: m.Discover        })))
+const Shelves         = React.lazy(() => import('./screens/Shelves').then(m         => ({ default: m.Shelves         })))
+const Profile         = React.lazy(() => import('./screens/Profile').then(m         => ({ default: m.Profile         })))
+const BookDetails     = React.lazy(() => import('./screens/BookDetails').then(m     => ({ default: m.BookDetails     })))
+const BrandGuide      = React.lazy(() => import('./screens/BrandGuide').then(m      => ({ default: m.BrandGuide      })))
+const Login           = React.lazy(() => import('./screens/Login').then(m           => ({ default: m.Login           })))
+const Register        = React.lazy(() => import('./screens/Register').then(m        => ({ default: m.Register        })))
+const AdminLayout     = React.lazy(() => import('./screens/admin/AdminLayout'))
+const AdminDashboard  = React.lazy(() => import('./screens/admin/AdminDashboard'))
+const TropesPage      = React.lazy(() => import('./screens/admin/TropesPage'))
+const CategoriesPage  = React.lazy(() => import('./screens/admin/CategoriesPage'))
+const AuthorsPage     = React.lazy(() => import('./screens/admin/AuthorsPage'))
 
 function AuthGuard() {
   const { isAuthenticated, isLoading } = useAuth()
   if (isLoading) return <AppLoadingScreen />
   if (!isAuthenticated) return <Navigate to="/login" replace />
+  return <Outlet />
+}
+
+function AdminGuard() {
+  const { user, isAuthenticated, isLoading } = useAuth()
+  if (isLoading) return <AppLoadingScreen />
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!user?.is_admin) return <Navigate to="/feed" replace />
   return <Outlet />
 }
 
@@ -60,6 +73,16 @@ export default function App() {
                       <Route path="/books/:bookId" element={<BookDetails />} />
                       <Route path="/brand"     element={<BrandGuide />} />
                     </Route>
+                  </Route>
+                </Route>
+
+                {/* Admin CMS — requires is_admin */}
+                <Route element={<AdminGuard />}>
+                  <Route element={<AdminLayout />}>
+                    <Route path="/admin"             element={<AdminDashboard />} />
+                    <Route path="/admin/tropes"      element={<TropesPage />} />
+                    <Route path="/admin/categories"  element={<CategoriesPage />} />
+                    <Route path="/admin/authors"     element={<AuthorsPage />} />
                   </Route>
                 </Route>
 

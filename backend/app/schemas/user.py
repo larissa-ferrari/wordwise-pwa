@@ -12,6 +12,7 @@ class UserBase(BaseModel):
 
 class UserPublic(UserBase):
     id: str
+    is_admin: bool = False
     books_read_count: int = 0
     reviews_count: int = 0
     followers_count: int = 0

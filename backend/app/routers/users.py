@@ -45,6 +45,7 @@ def _build_profile(user: User, current_user: User | None, db) -> UserProfile:
         display_name=user.display_name,
         bio=user.bio,
         aesthetic=user.aesthetic,
+        is_admin=user.is_admin,
         books_read_count=books_read,
         reviews_count=reviews_count,
         followers_count=followers_count,

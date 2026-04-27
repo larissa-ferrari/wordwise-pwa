@@ -1,11 +1,14 @@
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import String, Text, Float, Integer, ForeignKey, CHAR, DateTime, func, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.author import Author
 
 
 class Trope(Base):
@@ -30,12 +33,16 @@ class Book(Base):
     pages: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     published_year: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     isbn: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, unique=True)
+    cover_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    author_id: Mapped[Optional[str]] = mapped_column(CHAR(36), ForeignKey("authors.id", ondelete="SET NULL"), nullable=True)
     avg_rating: Mapped[float] = mapped_column(Float, default=0.0)
     rating_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
+    author_rel: Mapped[Optional["Author"]] = relationship("Author", back_populates="books")
     genres: Mapped[list["BookGenre"]] = relationship("BookGenre", back_populates="book", cascade="all, delete-orphan")
     tropes: Mapped[list["BookTrope"]] = relationship("BookTrope", back_populates="book", cascade="all, delete-orphan")
+    categories: Mapped[list["BookCategory"]] = relationship("BookCategory", back_populates="book", cascade="all, delete-orphan")
     reviews: Mapped[list["Review"]] = relationship("Review", back_populates="book", cascade="all, delete-orphan")
     shelf_entries: Mapped[list["ShelfEntry"]] = relationship("ShelfEntry", back_populates="book", cascade="all, delete-orphan")
 

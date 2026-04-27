@@ -11,12 +11,33 @@ export interface ApiUserPublic {
   display_name:    string
   bio:             string | null
   aesthetic:       string | null
+  is_admin:        boolean
   books_read_count:  number
   reviews_count:     number
   followers_count:   number
   following_count:   number
   reading_streak:    number
   created_at:        string
+}
+
+export interface ApiAuthorOut {
+  id:          string
+  name:        string
+  bio:         string | null
+  photo_url:   string | null
+  birth_year:  number | null
+  nationality: string | null
+  books_count: number
+  created_at:  string
+}
+
+export interface ApiCategoryOut {
+  id:          string
+  name:        string
+  slug:        string
+  description: string | null
+  books_count: number
+  created_at:  string
 }
 
 export interface ApiUserProfile extends ApiUserPublic {
@@ -32,16 +53,18 @@ export interface ApiTrope {
 }
 
 export interface ApiBookSummary {
-  id:              string
-  title:           string
-  author:          string
-  cover_gradient:  string | null
-  avg_rating:      number
-  genres:          string[]
+  id:             string
+  title:          string
+  author:         string
+  cover_gradient: string | null
+  cover_url:      string | null
+  avg_rating:     number
+  genres:         string[]
 }
 
 export interface ApiBookOut extends ApiBookSummary {
   series:         string | null
+  isbn:           string | null
   description:    string | null
   pages:          number | null
   published_year: number | null

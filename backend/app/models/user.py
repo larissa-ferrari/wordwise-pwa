@@ -22,6 +22,7 @@ class User(Base):
         String(20), nullable=True, default=AestheticEnum.dark_academia.value
     )
     avatar_color: Mapped[Optional[str]] = mapped_column(String(7), nullable=True)
+    is_admin: Mapped[bool] = mapped_column(default=False)
     reading_streak: Mapped[int] = mapped_column(default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

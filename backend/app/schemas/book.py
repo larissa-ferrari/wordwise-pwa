@@ -16,9 +16,11 @@ class BookBase(BaseModel):
     author: str
     series: Optional[str] = None
     cover_gradient: Optional[str] = None
+    cover_url: Optional[str] = None
     description: Optional[str] = None
     pages: Optional[int] = None
     published_year: Optional[int] = None
+    isbn: Optional[str] = None
 
 
 class BookCreate(BookBase):
@@ -42,6 +44,7 @@ class BookSummary(BaseModel):
     title: str
     author: str
     cover_gradient: Optional[str] = None
+    cover_url: Optional[str] = None
     avg_rating: float
     genres: List[str] = []
 

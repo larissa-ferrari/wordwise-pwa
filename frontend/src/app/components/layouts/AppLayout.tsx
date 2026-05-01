@@ -8,7 +8,7 @@ export function AppLayout() {
   const { isOpen, close } = useReviewModal()
 
   return (
-    <div className="min-h-screen bg-[#0a0807]">
+    <div className="min-h-screen bg-[var(--ww-bg)]">
       {/* Desktop sidebar — fixed, hidden on mobile */}
       <Sidebar />
 

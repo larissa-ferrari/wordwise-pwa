@@ -5,6 +5,7 @@ import type { EmotionId } from '../components/icons'
 import { reviewsService, booksService } from '../services'
 import type { ApiReviewOut, ApiBookSummary } from '../services'
 import { useAuth } from '../context/AuthContext'
+import { BookCover } from '../components/common/BookCover'
 
 const QUOTE = {
   text: 'Um leitor vive mil vidas antes de morrer. O homem que nunca lê vive apenas uma.',
@@ -25,8 +26,11 @@ function ReviewCard({ review, onLike }: { review: ApiReviewOut; onLike: (id: str
       </div>
 
       <div className="p-4 flex gap-4">
-        <div
-          className={`w-20 h-28 rounded-lg flex-shrink-0 shadow-lg ${review.book.cover_gradient ? `bg-gradient-to-br ${review.book.cover_gradient}` : 'bg-[#2a1f1a]'}`}
+        <BookCover
+          cover_url={review.book.cover_url}
+          cover_gradient={review.book.cover_gradient}
+          alt={review.book.title}
+          className="w-20 h-28 rounded-lg flex-shrink-0 shadow-lg"
         />
         <div className="flex-1 min-w-0">
           <h4 className="text-lg mb-1 leading-snug" style={{ fontFamily: 'Playfair Display, serif' }}>
@@ -221,7 +225,7 @@ export function Feed() {
               <div className="grid grid-cols-4 gap-2">
                 {trending.map((book) => (
                   <button key={book.id} className="text-left group">
-                    <div className={`w-full aspect-[2/3] rounded-lg mb-1.5 group-hover:scale-105 transition-transform ${book.cover_gradient ? `bg-gradient-to-br ${book.cover_gradient}` : 'bg-[#2a1f1a]'}`} />
+                    <BookCover cover_url={book.cover_url} cover_gradient={book.cover_gradient} alt={book.title} className="w-full aspect-[2/3] rounded-lg mb-1.5 group-hover:scale-105 transition-transform" />
                     <p className="text-[10px] text-[#e8d4a8]/80 line-clamp-2 leading-tight">{book.title}</p>
                   </button>
                 ))}

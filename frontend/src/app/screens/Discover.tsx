@@ -6,6 +6,7 @@ import { booksService } from '../services'
 import type { ApiBookSummary } from '../services'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../constants'
+import { BookCover } from '../components/common/BookCover'
 
 const moods: { id: MoodId; label: string; color: string }[] = [
   { id: 'escape',  label: 'Escapismo',  color: '#b87cde' },
@@ -65,7 +66,7 @@ function BookGrid({ books, isLoading }: { books: ApiBookSummary[]; isLoading: bo
           onClick={() => navigate(ROUTES.bookDetails(book.id))}
           className="text-left group"
         >
-          <div className={`w-full aspect-[2/3] rounded-lg mb-2 group-hover:scale-105 transition-transform ${book.cover_gradient ? `bg-gradient-to-br ${book.cover_gradient}` : 'bg-[#2a1f1a]'}`} />
+          <BookCover cover_url={book.cover_url} cover_gradient={book.cover_gradient} alt={book.title} className="w-full aspect-[2/3] rounded-lg mb-2 group-hover:scale-105 transition-transform" />
           <h3 className="text-xs line-clamp-2 mb-0.5 leading-tight">{book.title}</h3>
           <p className="text-[10px] text-[#8a7e6e] line-clamp-1">{book.author}</p>
           {book.genres.length > 0 && (

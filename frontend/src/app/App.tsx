@@ -6,6 +6,8 @@ import { OnboardingProvider } from './context/OnboardingContext'
 import { ReviewModalProvider } from './context/ReviewModalContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { useOnboarding } from './context/OnboardingContext'
+import { ThemeProvider } from './context/ThemeContext'
+import { ReadingPrefsProvider } from './context/ReadingPrefsContext'
 
 const Onboarding      = React.lazy(() => import('./screens/Onboarding').then(m      => ({ default: m.Onboarding      })))
 const Feed            = React.lazy(() => import('./screens/Feed').then(m            => ({ default: m.Feed            })))
@@ -16,6 +18,12 @@ const BookDetails     = React.lazy(() => import('./screens/BookDetails').then(m 
 const BrandGuide      = React.lazy(() => import('./screens/BrandGuide').then(m      => ({ default: m.BrandGuide      })))
 const Login           = React.lazy(() => import('./screens/Login').then(m           => ({ default: m.Login           })))
 const Register        = React.lazy(() => import('./screens/Register').then(m        => ({ default: m.Register        })))
+const Stories         = React.lazy(() => import('./screens/Stories').then(m         => ({ default: m.Stories         })))
+const StoryDetails    = React.lazy(() => import('./screens/StoryDetails').then(m    => ({ default: m.StoryDetails    })))
+const ChapterReader   = React.lazy(() => import('./screens/ChapterReader').then(m   => ({ default: m.ChapterReader   })))
+const MyWorks         = React.lazy(() => import('./screens/MyWorks').then(m         => ({ default: m.MyWorks         })))
+const StoryEditor     = React.lazy(() => import('./screens/StoryEditor').then(m     => ({ default: m.StoryEditor     })))
+const ChapterEditor   = React.lazy(() => import('./screens/ChapterEditor').then(m   => ({ default: m.ChapterEditor   })))
 const AdminLayout     = React.lazy(() => import('./screens/admin/AdminLayout'))
 const AdminDashboard  = React.lazy(() => import('./screens/admin/AdminDashboard'))
 const TropesPage      = React.lazy(() => import('./screens/admin/TropesPage'))
@@ -48,51 +56,63 @@ function OnboardingRoute() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <OnboardingProvider>
-        <ReviewModalProvider>
-          <BrowserRouter>
-            <React.Suspense fallback={<AppLoadingScreen />}>
-              <Routes>
-                {/* Public routes */}
-                <Route path="/login"    element={<Login />} />
-                <Route path="/register" element={<Register />} />
+    <ThemeProvider>
+      <ReadingPrefsProvider>
+        <AuthProvider>
+          <OnboardingProvider>
+            <ReviewModalProvider>
+              <BrowserRouter>
+                <React.Suspense fallback={<AppLoadingScreen />}>
+                  <Routes>
+                    {/* Public routes */}
+                    <Route path="/login"    element={<Login />} />
+                    <Route path="/register" element={<Register />} />
 
-                {/* Semi-public: onboarding (needs auth, skips if already done) */}
-                <Route path="/onboarding" element={<OnboardingRoute />} />
+                    {/* Semi-public: onboarding (needs auth, skips if already done) */}
+                    <Route path="/onboarding" element={<OnboardingRoute />} />
 
-                {/* Protected routes */}
-                <Route element={<AuthGuard />}>
-                  <Route element={<OnboardingGuard />}>
-                    <Route element={<AppLayout />}>
-                      <Route path="/"          element={<Navigate to="/feed" replace />} />
-                      <Route path="/feed"      element={<Feed />} />
-                      <Route path="/discover"  element={<Discover />} />
-                      <Route path="/shelves"   element={<Shelves />} />
-                      <Route path="/profile"   element={<Profile />} />
-                      <Route path="/books/:bookId" element={<BookDetails />} />
-                      <Route path="/brand"     element={<BrandGuide />} />
+                    {/* Protected routes */}
+                    <Route element={<AuthGuard />}>
+                      <Route element={<OnboardingGuard />}>
+                        <Route element={<AppLayout />}>
+                          <Route path="/"          element={<Navigate to="/feed" replace />} />
+                          <Route path="/feed"      element={<Feed />} />
+                          <Route path="/discover"  element={<Discover />} />
+                          <Route path="/shelves"   element={<Shelves />} />
+                          <Route path="/profile"   element={<Profile />} />
+                          <Route path="/books/:bookId" element={<BookDetails />} />
+                          <Route path="/stories"   element={<Stories />} />
+                          <Route path="/stories/:storyId" element={<StoryDetails />} />
+                          <Route path="/stories/:storyId/chapters/:chapterNum" element={<ChapterReader />} />
+                          <Route path="/my-works"  element={<MyWorks />} />
+                          <Route path="/my-works/new" element={<StoryEditor />} />
+                          <Route path="/my-works/:storyId/edit" element={<StoryEditor />} />
+                          <Route path="/my-works/:storyId/chapters/new" element={<ChapterEditor />} />
+                          <Route path="/my-works/:storyId/chapters/:chapterNum/edit" element={<ChapterEditor />} />
+                          <Route path="/brand"     element={<BrandGuide />} />
+                        </Route>
+                      </Route>
                     </Route>
-                  </Route>
-                </Route>
 
-                {/* Admin CMS — requires is_admin */}
-                <Route element={<AdminGuard />}>
-                  <Route element={<AdminLayout />}>
-                    <Route path="/admin"             element={<AdminDashboard />} />
-                    <Route path="/admin/tropes"      element={<TropesPage />} />
-                    <Route path="/admin/categories"  element={<CategoriesPage />} />
-                    <Route path="/admin/authors"     element={<AuthorsPage />} />
-                  </Route>
-                </Route>
+                    {/* Admin CMS — requires is_admin */}
+                    <Route element={<AdminGuard />}>
+                      <Route element={<AdminLayout />}>
+                        <Route path="/admin"             element={<AdminDashboard />} />
+                        <Route path="/admin/tropes"      element={<TropesPage />} />
+                        <Route path="/admin/categories"  element={<CategoriesPage />} />
+                        <Route path="/admin/authors"     element={<AuthorsPage />} />
+                      </Route>
+                    </Route>
 
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </React.Suspense>
-          </BrowserRouter>
-        </ReviewModalProvider>
-      </OnboardingProvider>
-    </AuthProvider>
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </React.Suspense>
+              </BrowserRouter>
+            </ReviewModalProvider>
+          </OnboardingProvider>
+        </AuthProvider>
+      </ReadingPrefsProvider>
+    </ThemeProvider>
   )
 }
 

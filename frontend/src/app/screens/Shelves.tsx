@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BookOpen, CheckCircle, Clock, Plus, Grid3x3, List, Star } from 'lucide-react'
 import { useShelves } from '../hooks/useShelves'
 import type { ApiShelfEntryOut } from '../services'
+import { BookCover } from '../components/common/BookCover'
 
 const shelfTabs = [
   { id: 'reading', label: 'Lendo',     Icon: BookOpen,    color: '#c8a96e' },
@@ -28,7 +29,7 @@ function ReadingCard({ entry, onUpdateProgress, onMoveToRead }: {
   return (
     <div className="bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-2xl p-4 hover:border-[#c8a96e]/40 transition-all">
       <div className="flex gap-4 mb-4">
-        <div className={`w-16 h-24 rounded-lg flex-shrink-0 shadow-lg ${book.cover_gradient ? `bg-gradient-to-br ${book.cover_gradient}` : 'bg-[#2a1f1a]'}`} />
+        <BookCover cover_url={book.cover_url} cover_gradient={book.cover_gradient} alt={book.title} className="w-16 h-24 rounded-lg flex-shrink-0 shadow-lg" />
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-medium mb-1 truncate">{book.title}</h3>
           <p className="text-xs text-[#8a7e6e] mb-2">{book.author}</p>
@@ -158,11 +159,11 @@ export function Shelves() {
                   <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 lg:gap-4">
                     {readEntries.map(entry => (
                       <button key={entry.id} className="text-left group">
-                        <div className={`w-full aspect-[2/3] rounded-lg mb-2 group-hover:scale-105 transition-transform relative shadow-md ${entry.book.cover_gradient ? `bg-gradient-to-br ${entry.book.cover_gradient}` : 'bg-[#2a1f1a]'}`}>
+                        <BookCover cover_url={entry.book.cover_url} cover_gradient={entry.book.cover_gradient} alt={entry.book.title} className="w-full aspect-[2/3] rounded-lg mb-2 group-hover:scale-105 transition-transform shadow-md">
                           <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-[#c8a96e] rounded-full flex items-center justify-center text-[#1a1210] text-[10px] font-bold">
                             {entry.book.avg_rating.toFixed(0)}
                           </div>
-                        </div>
+                        </BookCover>
                         <h3 className="text-[10px] lg:text-xs line-clamp-2 mb-0.5 leading-tight">{entry.book.title}</h3>
                         <p className="text-[9px] lg:text-[10px] text-[#8a7e6e] line-clamp-1">{entry.book.author}</p>
                       </button>
@@ -172,7 +173,7 @@ export function Shelves() {
                   <div className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
                     {readEntries.map(entry => (
                       <button key={entry.id} className="w-full p-3 bg-[#1a1210]/50 border border-[#c8a96e]/20 rounded-xl hover:border-[#c8a96e]/40 transition-all flex items-center gap-3">
-                        <div className={`w-10 h-14 rounded flex-shrink-0 ${entry.book.cover_gradient ? `bg-gradient-to-br ${entry.book.cover_gradient}` : 'bg-[#2a1f1a]'}`} />
+                        <BookCover cover_url={entry.book.cover_url} cover_gradient={entry.book.cover_gradient} alt={entry.book.title} className="w-10 h-14 rounded flex-shrink-0" />
                         <div className="text-left flex-1 min-w-0">
                           <h3 className="text-sm font-medium mb-0.5 truncate">{entry.book.title}</h3>
                           <p className="text-xs text-[#8a7e6e] truncate">{entry.book.author}</p>
@@ -201,7 +202,7 @@ export function Shelves() {
                   <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 lg:gap-4">
                     {wantEntries.map(entry => (
                       <button key={entry.id} className="text-left group">
-                        <div className={`w-full aspect-[2/3] rounded-lg mb-2 group-hover:scale-105 transition-transform shadow-md ${entry.book.cover_gradient ? `bg-gradient-to-br ${entry.book.cover_gradient}` : 'bg-[#2a1f1a]'}`} />
+                        <BookCover cover_url={entry.book.cover_url} cover_gradient={entry.book.cover_gradient} alt={entry.book.title} className="w-full aspect-[2/3] rounded-lg mb-2 group-hover:scale-105 transition-transform shadow-md" />
                         <h3 className="text-[10px] lg:text-xs line-clamp-2 mb-0.5 leading-tight">{entry.book.title}</h3>
                         <p className="text-[9px] lg:text-[10px] text-[#8a7e6e] line-clamp-1">{entry.book.author}</p>
                       </button>

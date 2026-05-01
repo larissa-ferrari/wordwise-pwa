@@ -116,6 +116,72 @@ export interface UserCompatibility {
   matchPercentage: number
 }
 
+// ─── Stories ──────────────────────────────────────────────────────────────────
+
+export type StoryRating   = 'general' | 'teen' | 'mature' | 'explicit'
+export type StoryStatus   = 'ongoing' | 'complete' | 'hiatus'
+export type StoryCategory = 'gen' | 'f/f' | 'f/m' | 'm/m' | 'multi' | 'other'
+export type TagType       = 'fandom' | 'character' | 'relationship' | 'freeform'
+export type StoryWarning  =
+  | 'violence'
+  | 'character_death'
+  | 'non_con'
+  | 'underage'
+  | 'no_warnings'
+  | 'choose_not_to_warn'
+
+export interface StoryTag {
+  id: string
+  name: string
+  slug: string
+  type: TagType
+}
+
+export interface StoryChapterSummary {
+  id: string
+  chapterNumber: number
+  title: string
+  wordCount: number
+  publishedAt: string
+}
+
+export interface Story {
+  id: string
+  author: Pick<User, 'id' | 'name' | 'username' | 'avatar'>
+  title: string
+  summary: string
+  coverGradient: string
+  rating: StoryRating
+  status: StoryStatus
+  category: StoryCategory
+  warnings: StoryWarning[]
+  tags: StoryTag[]
+  wordCount: number
+  chaptersCount: number
+  kudosCount: number
+  bookmarksCount: number
+  hitsCount: number
+  isKudosed?: boolean
+  isBookmarked?: boolean
+  chapters: StoryChapterSummary[]
+  linkedBook?: Pick<Book, 'id' | 'title' | 'author'>
+  publishedAt: string
+  updatedAt: string
+}
+
+export interface StoryChapter {
+  id: string
+  storyId: string
+  story: Pick<Story, 'id' | 'title' | 'author' | 'chaptersCount' | 'coverGradient'>
+  chapterNumber: number
+  title: string
+  content: string
+  wordCount: number
+  publishedAt: string
+  prevChapter: StoryChapterSummary | null
+  nextChapter: StoryChapterSummary | null
+}
+
 // ─── API / Service shapes ─────────────────────────────────────────────────────
 
 export interface PaginatedResponse<T> {

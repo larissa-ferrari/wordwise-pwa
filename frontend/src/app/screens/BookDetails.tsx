@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Star, Heart, Share2, Plus, BookOpen } from 'lucide-react'
 import { EmotionIcon, UserAvatar } from '../components/icons'
+import { BookCover } from '../components/common/BookCover'
 import type { EmotionId } from '../components/icons'
 import { booksService, reviewsService, shelvesService } from '../services'
 import type { ApiBookOut, ApiEmotionBreakdown, ApiReviewOut } from '../services'
@@ -94,7 +95,7 @@ export function BookDetails() {
 
             {/* Hero */}
             <div className="flex gap-6 mb-6">
-              <div className={`w-28 h-44 lg:w-36 lg:h-56 xl:w-44 xl:h-64 rounded-2xl flex-shrink-0 shadow-2xl shadow-[#c8a96e]/15 ${book.cover_gradient ? `bg-gradient-to-br ${book.cover_gradient}` : 'bg-[#2a1f1a]'}`} />
+              <BookCover cover_url={book.cover_url} cover_gradient={book.cover_gradient} alt={book.title} className="w-28 h-44 lg:w-36 lg:h-56 xl:w-44 xl:h-64 rounded-2xl flex-shrink-0 shadow-2xl shadow-[#c8a96e]/15" />
               <div className="flex-1 min-w-0">
                 <h2 className="text-xl lg:text-2xl mb-1 leading-tight" style={{ fontFamily: 'Playfair Display, serif' }}>
                   {book.title}

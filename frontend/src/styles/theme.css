@@ -196,3 +196,24 @@
   --ww-font-display: 'Playfair Display', Georgia, serif;
   --ww-font-body: 'DM Sans', system-ui, sans-serif;
 }
+
+/* ─── WordWise Dynamic Theme (dark default / light override) ─────────────────── */
+:root {
+  --ww-bg:          #0a0807;
+  --ww-bg-raised:   #1a1210;
+  --ww-bg-overlay:  #231a15;
+  --ww-accent:      #c8a96e;
+  --ww-accent-pale: #e8d4a8;
+  --ww-text:        #e8d4a8;
+  --ww-muted:       #8a7e6e;
+}
+
+[data-theme="light"] {
+  --ww-bg:          #f5f0e8;
+  --ww-bg-raised:   #ede8df;
+  --ww-bg-overlay:  #e5dfd4;
+  --ww-accent:      #7a5c1e;
+  --ww-accent-pale: #3d2208;
+  --ww-text:        #2d1f0e;
+  --ww-muted:       #7a6650;
+}
